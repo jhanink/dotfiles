@@ -1,0 +1,16 @@
+--ignore-dir=dev
+--ignore-dir=node_modules
+--ignore-dir=.idea
+--ignore-dir=.tmp
+--ignore-dir=lightyear
+--ignore-dir=woody
+--ignore-dir=pl-core
+--ignore-dir=pl-queue
+--ignore-dir=pl-toolbar
+--ignore-dir=pl-inputs
+--ignore-dir=pl-buttons
+--ignore-dir=toys
+--ignore-dir=toychest
+--smart-case
+--max-count=10
+--sort-files

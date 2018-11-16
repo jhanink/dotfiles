@@ -1,0 +1,464 @@
+_pwd=`pwd`
+
+export EDITOR='vim'
+
+export ACK_OPTIONS='--ignore-dir=lightyear --ignore-dir=toychest --ignore-dir=toys --ignore-dir=woody --ignore-dir=pl-queue --ignore-dir=pl-toolbar --ignore-dir=clinicial_portal --ignore-dir=test'
+
+export CYPRESS_numTestsKeptInMemory=500
+export CYPRESS_videoRecording=false
+
+#### foundry test generator
+
+export PL_ENV=wpqa
+export PL_HOST=presencestag.com
+export PL_USERNAME=qauser
+ export PL_PASSWORD=')$#=m$^Epa%b:7AWu$fg'
+# /end - foundry test generator
+alias foundry='python foundry.py run';
+
+function runecsubset() {
+  cypress run --spec cypress/integration/clients/clients-list-all.js;
+  sleep 5;
+  cypress run --spec cypress/integration/clients/client-details.js
+}
+
+#-----------------------------------
+export GITAWAREPROMPT=~/.bash/git-aware-prompt
+source "${GITAWAREPROMPT}/main.sh"
+# export PS1="\u@\h \W \[$txtcyn\]\$git_branch\[$txtred\]\$git_dirty\[$txtrst\]\$ "
+export PS1="→ \W \[$txtcyn\]\$git_branch\[$txtred\]\$git_dirty\[$txtrst\]\$ "
+
+
+PATH=/usr/local/Cellar/vim/8.0.0600/bin:$PATH;
+
+
+#------- Aliases ----------
+if [ -z "$CD_CURRENT" ]; then export CD_CURRENT='cdeduclients'; fi;
+alias ll='ls -alGp'
+alias cdcurrent='eval $CD_CURRENT'
+alias ccd='cdcurrent'
+alias cdvue='cd ~/projects/joe/vue'
+alias eb='vim ~/.bash_profile && source ~/.bash_profile'
+alias ev='vim ~/.vimrc'
+alias et='vim ~/.tmux.conf'
+#alias tmux='tmux source ~/.tmux.conf'
+alias gitt='clear && git branch && git status'
+alias ggitt='find . -follow -maxdepth 1 -mindepth 1 -type d -exec sh -c "(echo {} && cd {} && git status -s && echo)" \;'
+alias reloadd='source ~/.bash_profile'
+alias bbn='babel-node'
+alias jsonpp='cat $1 | python -m json.tool'
+alias cdclapi='cd /Users/jhanink/projects/__archive/clapi && gitt'
+alias cdadmin='cdrex && cd app/src/rex/modules/admin'
+alias cdlightyear='cdpl && cd lightyear'
+alias cdwoody='cdpl && cd woody'
+alias cdeduclients='cdpl && cd edu-clients'
+alias cdlanding='cdpl && cd pl-landing'
+alias cdhamm='cdpl && cd hamm'
+alias cdapi='cdpl && cd api-workplace'
+alias cdcypressshared='cdpl && cd pl-cypress-shared'
+alias cdmocks='cdpl && cd pg-rex/rex/app/src/rex/mocks'
+alias cdjoe='cd ~/projects/joe'
+alias cdtb='cd ~/projects/pl/test-data-builder'
+
+alias curbranch='echo "Current Branch [ ${__BRANCH} ] "'
+alias ngrok='/joe/install/ngrok'
+
+alias pip='.venv/bin/pip3'
+
+alias cy='cypress'
+alias cyhg='/Applications/Cypress.app/Contents/MacOS/Cypress --project ${_pwd} --show-headless-gui'
+
+alias gittags='git fetch && git show-ref --tags | grep "\/Live-Activation" | sort -k2 -r'
+alias gitreflog='git log -g --abbrev-commit --pretty=oneline'
+alias showlinks='ll node_modules | grep ^l && ll node_modules | grep ^l | wc -l'
+#PROMPT_COMMAND='echo -ne "\033]0;\007"'
+alias cypress='./node_modules/.bin/cypress'
+alias gitlog='git log --stat'
+alias gitusers='git shortlog -sne'
+alias gitlogstat='git log --name-only'
+alias gitlogdiff='git log -p'
+alias gitlogshort='git log --pretty=format:"%h%x09%an%x09%ad%x09%s"'
+alias gitbranchcontains='git branch --contains $1'
+alias gitmergepath='git log --graph --oneline --no-abbrev-commit | grep "Merge branch '.*' into" | sed 's/^[^a-z0-9]*[a-z0-9]//g''
+alias _ecenv='node ./node-scripts/set-env --envkey=$1 && ecshowenv '
+function ecenv() {
+#  echo "----- copying ~/projects/local-configs/$1.js to ./config/env";
+#  cp ~/projects/pl/local-configs/"$1".js ./config/env;
+  git checkout ./config/env/joe.js;
+  sed -i '' -e "s/wpqa/$1/g" ./config/env/joe.js;
+  node ./node-scripts/set-env --envkey=joe;
+  ecshowenv;
+}
+
+function landingenv() {
+  git checkout ./config/env/local.js;
+  sed -i '' -e "s/workplace/$1\.workplace/g" ./config/env/local.js;
+  sed -i '' -e "s/login/$1\.login/g" ./config/env/local.js;
+  node ./node-scripts/set-env --envkey=local;
+  landingshowenv;
+
+}
+alias _ecshowenv='echo "---------------------------------" && cat config/env/joe.js | grep apiWorkplace -A 1 | tail -1 | tr -d "[:space:]" | cut -c 14- | rev | cut -c 3- | rev && echo "---------------------------------"'
+function ecshowenv() {
+  echo "---------------------------------" && cat config/env/joe.js | grep apiWorkplace -A 1 | tail -1 | tr -d "[:space:]" | cut -c 14- | rev | cut -c 3- | rev && echo "---------------------------------";
+}
+function landingshowenv() {
+  echo "---------------------------------" && cat config/env/local.js | grep apiWorkplace -A 1 | tail -1 | tr -d "[:space:]" | cut -c 36- | rev | cut -c 3- | rev && echo "---------------------------------";
+}
+
+alias _ecstart='clear && ecenv && npm run setup && clear && echo "---------- http://local.presencestag.com/c ----------" && sudo env "PATH=$PATH" ng serve --host=0.0.0.0 --disable-host-check --port=3010 --environment=joe --deploy-url=/c'
+function ecstart() {
+  clear;
+  ecenv "$1";
+  #npm run setup;
+  npm run copy-repos
+  sudo env "PATH=$PATH" ng serve --host=0.0.0.0 --disable-host-check --port=3010 --environment=joe --deploy-url=/c;
+}
+
+function startec() {
+  PL_ENV=$1
+  export APIWORKPLACE_URL=https://$PL_ENV.workplace.presencestag.com
+  export AUTH_URL=https://$PL_ENV.login.presencestag.com
+  export APOLLO_URL=https://$PL_ENV.workplace.presencestag.com/graphql/v1/
+  export APPS_URL=https://$PL_ENV.apps.presencestag.com
+  npm start
+}
+function woodystart() {
+  clear;
+  cp config/wpqa-config.js app/dev/woody/env-config.js;
+  echo "----- using wpqa env config -----";
+  grunt serve;
+}
+function hammstart() {
+  clear;
+  cp config/wpqa-config.js app/dev/hamm/env-config.js;
+  echo "----- using wpqa env config -----";
+  grunt serve;
+}
+function landingstart() {
+  clear;
+  landingenv "$1";
+  npm run setup;
+  sudo env "PATH=$PATH" ng serve --host=0.0.0.0 --disable-host-check --port=3012 --environment=local --deploy-url=/landing;
+}
+alias python='python3'
+alias pip='/usr/bin/python3 -m pip'
+
+alias wwebserver='python -m SimpleHTTPServer 8080'
+function vapi() {
+  cdapi;
+  . .venv/wp/bin/activate;
+  alias pip='/Users/jhanink/projects/pl/api-workplace/.venv/wp/bin/pip3'
+}
+
+HISTCONTROL=ignorespace
+
+
+CYPRESS_SINGLE_TEST='invoice-documentation-assistant/ida-readonly-tests.js'
+function cypressci() {
+  cypress run --spec cypress/integration/${CYPRESS_SINGLE_TEST} --record --key 6b03c4c8-3e3c-4abc-adff-e8f21d436aa6 --env plEnv=local --config=numTestsKeptInMemory=0,watchForFileChanges=false
+}
+
+
+function educlients() {
+  echo "" && echo "----- starting educlients -----" && echo "";
+  npm run svg && npm start;
+}
+function eclink() {
+  echo "" && echo "----- updating and linking deps -----" && echo "";
+  cdeduclients && cd ../pl-components-ng2 && git pull origin master && npm link;
+  cdeduclients && cd ../pl-services-ng2 && git pull origin master && npm link;
+  cdeduclients && npm link pl-components-ng2 && nm link pl-services-ng2;
+  ecstart;
+}
+function ecclean() {
+  echo "" && echo "----- cleaning educlients -----" && echo "";
+  cdeduclients && cd src && rm -rf lib-*;
+}
+
+function ecupdateandlink() {
+  ecclean;
+  cdeduclients;
+  npm i;
+  eclink;
+}
+
+function ecupdate() {
+  ecclean;
+  cdeduclients;
+  npm i;
+  ecstart
+}
+
+# TODO: use jq instead of underscore
+# https://www.npmjs.com/package/underscore-cli
+alias u='underscore'
+alias ggetusers='cat ~/projects/pl/pl-cypress-shared/test-data/manual-qa-base-users-login.json | tr -d "\n"'
+alias ggetuserslocal='cat ./test-data/manual-qa-base-users-login.json | tr -d "\n"'
+function uusers() {
+  ggetusers | u "$@" print --color
+}
+function uuserslocal() {
+  ggetuserslocal | u "$@" print --color && echo "----------";
+  ggetuserslocal | u "$@" print --color | grep -m 1 -B 2 -A 1 SLP;
+
+}
+function rrawusers() {
+  ggetusers | u "$@" | xargs echo -n | pbcopy
+}
+function ccopyusers() {
+  ggetusers | u "$@" | pbcopy
+}
+function ggetlead() {
+  ggetleadlocal
+#  ggetusers | u extract leads.0.username | tr -d '"\n' | pbcopy && pbpaste && echo ''
+}
+function ggetleadlocal() {
+  ggetuserslocal | u extract leads.0.username | tr -d '"\n' | pbcopy && pbpaste && echo ''
+}
+
+alias ggenusers='cd ~/projects/pl/pl-cypress-shared && npm run test-data-setup && cd - && ggetusers | u print --color'
+alias _ggenuserslocal='clear && ecshowenv && npm run test-data-setup -- envKey=joe && ggetuserslocal | u print --color && echo "----------" && uuserslocal'
+
+# generate test users against a stag k8s env
+# dependencies
+#   scripts
+#     * ecenv
+#     * uuserslocal
+#   packages
+#     * underscore-cli
+function ggenuserslocal() {
+  clear;
+  ecenv "$1";
+  npm run test-data-setup -- envKey=joe;
+  uuserslocal
+  open https://"$1".login.presencestag.com/logout/
+  sleep 1
+  open https://"$1".login.presencestag.com/login/?next=/admin/user/user/
+}
+alias ggendata='npm run test-data-setup -- scenarioset=e2eCI'
+alias rruntests='npm run test-data-setup -- scenarioset=e2eCI && cypress run --config=numTestsKeptInMemory=0,watchForFileChanges=false,videoRecording=false --env plEnv=local'
+alias rruntestsci='npm run test-data-setup -- scenarioset=e2eCI && cypress run --record --key 6b03c4c8-3e3c-4abc-adff-e8f21d436aa6 --env plEnv=local --config=numTestsKeptInMemory=0,watchForFileChanges=false,videoRecording=false'
+#------ PL stuff ------------
+
+export PL_PROJECTS_DIR=~/projects/pl
+alias cdpl='cd $PL_PROJECTS_DIR'
+alias cdtable='cd $PL_PROJECTS_DIR/pl-table'
+alias cdlightyear='cd $PL_PROJECTS_DIR/lightyear'
+alias cdtoys='cd $PL_PROJECTS_DIR/toys'
+alias cdchest='cd $PL_PROJECTS_DIR/toychest'
+alias cdcore='cd $PL_PROJECTS_DIR/pl-core'
+alias cdqueue='cd $PL_PROJECTS_DIR/pl-queue'
+alias cdtoolbar='cd $PL_PROJECTS_DIR/pl-toolbar'
+export PL_CURRENT_BRANCH=fargo
+#alias go='grunt serve'
+alias golightyear='cdlightyear && go'
+alias gotoys='cdtoys && go'
+alias gochest='cdchest && go'
+alias gp='git pull origin $1'
+alias startjenkins='sudo launchctl load /Library/LaunchDaemons/org.jenkins-ci.plist'
+alias stopjenkins='sudo launchctl unload /Library/LaunchDaemons/org.jenkins-ci.plist'
+function ggitgrepall() {
+git grep "$@" $(git rev-list --all)
+}
+
+function plversiondrift() {
+  MODULES=('pl-core' 'pl-apis' 'pl-buttons' 'pl-inputs' 'pl-models' 'pl-modules' 'pl-navs' 'pl-overlays' 'pl-records' 'pl-table')
+  for i in "${MODULES[@]}"
+  do :
+  # echo $(git ls-remote --tags https://github.com/presencelearning/${i}.git | grep -v '\^' | cut -d'/' -f3 | sed 's/^v//' | sort -t"." -k1,1n -k2,2n -k3,3n | tail -1 )$'\t'$i
+  # cat package.json | grep $i | cut -d'#' -f2 | sed 's/^v//' | sed 's/"$//' | sed 's/",$//'
+  VERSION_REMOTE=$(git ls-remote --tags https://github.com/presencelearning/${i}.git | grep -v '\^' | cut -d'/' -f3 | sed 's/^v//' | sort -t"." -k1,1n -k2,2n -k3,3n | tail -1 )
+  VERSION_LOCAL=$(cat package.json | grep $i | cut -d'#' -f2 | sed 's/^v//' | sed 's/"$//' | sed 's/",$//')
+  if [ $VERSION_LOCAL ]
+  then
+    if [ "$VERSION_REMOTE" == "$VERSION_LOCAL" ]
+    then echo -e "$i OK $VERSION_LOCAL"
+    else echo -e "$i DRIFT $VERSION_LOCAL $VERSION_REMOTE"
+    fi
+  fi
+  done
+}
+alias plshowversiondrift='plversiondrift | column -t'
+
+function fbget() {
+  firebase data:get $1 -f learning-test | prettyjson --inline-arrays=1
+}
+function fbgetplain() {
+  firebase data:get $1 -f learning-test
+}
+function fbset() {
+  firebase data:set $1 $2 -f learning-test -y
+}
+
+function ___plUpdateAll() {
+  cd $PL_PROJECTS_DIR/pl-core && git pull && npm install
+  cd $PL_PROJECTS_DIR/pl-queue && git pull && npm install
+  cd $PL_PROJECTS_DIR/pl-toolbar && git pull && npm install
+
+  cd $PL_PROJECTS_DIR/lightyear&& git pull && npm install
+  cd $PL_PROJECTS_DIR/toys && git pull && npm install
+  cd $PL_PROJECTS_DIR/toychest && git pull && npm install
+}
+
+function plNpmLink() {
+  npm link ../pl-core && npm link ../pl-queue && npm link ../pl-toolbar
+}
+
+function plNpmLinkAll() {
+  cd $PL_PROJECTS_DIR/lightyear && plNpmLink
+  cd $PL_PROJECTS_DIR/toys && plNpmLink
+  cd $PL_PROJECTS_DIR/toychest && plNpmLink
+
+  plNpmLinkCheck
+}
+
+function plNpmLinkCheck() {
+  echo "------ lightyear ------"
+  cd $PL_PROJECTS_DIR/lightyear/node_modules && ls -al pl-*
+  echo "------ toys -----"
+  cd $PL_PROJECTS_DIR/toys/node_modules && ls -al pl-*
+  echo "------ toychest -----"
+  cd $PL_PROJECTS_DIR/toychest/node_modules && ls -al pl-*
+}
+
+function plShowBranches () {
+  __pwd=`pwd`
+  cd $PL_PROJECTS_DIR
+  _plShowBranches
+  cd $__pwd;
+}
+
+function plBranchAll() {
+  _pwd=`pwd`
+  projects=('lightyear' 'toys' 'toychest' 'pl-core' 'pl-queue' 'pl-toolbar')
+  for i in "${projects[@]}"
+  do
+    cd $PL_PROJECTS_DIR
+    cd $i
+    git checkout $1
+    cd $_pwd
+  done
+}
+
+function plUpdateAll() {
+  plShowBranches
+  echo "-- waiting 3 seconds --"
+  sleep 3
+  _pwd=`pwd`
+  projects=('lightyear' 'toys' 'toychest' 'pl-core' 'pl-queue' 'pl-toolbar')
+  for i in "${projects[@]}"
+  do
+    cd $PL_PROJECTS_DIR
+    cd $i
+    git pull origin $1
+    cd $_pwd
+  done
+}
+
+function _plShowBranches() {
+  _pwd=`pwd`
+  projects=('lightyear' 'toys' 'toychest' 'pl-core' 'pl-queue' 'pl-toolbar')
+  for i in "${projects[@]}"
+  do
+    cd $i
+    printf "%-11s" $i | tr '[:lower:]' '[:upper:]'  && git branch | grep \*
+    cd $_pwd
+  done
+}
+
+function gittt {
+  clear
+  _originalDir=`pwd`
+  cd ~/projects/pl;
+  _projectDir=`pwd`
+  projects=('woody' 'hamm' 'lightyear' 'toychest' 'pl-apis')
+  for i in "${projects[@]}"
+  do
+    cd $i
+    printf "%-11s" $i | tr '[:lower:]' '[:upper:]'
+    echo ""
+    git branch
+    git status | grep -v "^On branch"
+    cd $_projectDir
+  done
+  cd $_originalDir
+}
+alias ggstart='grunt serve'
+#------ END / PL stuff ------
+
+
+
+
+
+#------- Functions --------
+function clipp() {
+  echo -n "$1" | pbcopy
+}
+
+function showdeployedwars() {
+  watch -n 1 "echo "" && echo "" && echo "" &&  echo "Current Branch [ `cat ~/.__BRANCH` ]" && echo '' && ls -altGTp $CATALINA_BASE/webapps/*.war && echo '' && echo '-----' && cat ~/.done"
+}
+
+
+function setbranch() {
+  echo $1 > ~/.__BRANCH
+  showbranch
+}
+
+function showbranch() {
+  __BRANCH__=`cat ~/.__BRANCH`
+  echo "Current Branch in FILE [ $__BRANCH__ ]"
+}
+
+
+export CLAPI_SET_DATATYPE=ON
+#export CLAPI_SET_MOCKS=ON
+
+
+### OLD STUFF ###
+
+function deleteorder() {
+echo -e "\n"
+TC=${1} && curl -X DELETE -H "Accept: application/json" -H "WM_SVC.VERSION: 1.0.0" -H "WM_SVC.ENV: dev" -H "WM_SVC.NAME: gg" -H "WM_CONSUMER.ID: ff" -H "WM_CONSUMER.IP: 172.29.175.171" -H "WM_QOS.CORRELATION_ID: d1f0c0d2-2cf4-497b-b630-06d609d987b0" -H "WM_SEC.AUTH_TOKEN: WgGaTf5YlI8naVndAkf2r9kmnRcuYxPbeOuGgXo0aoeyVCoHTpVufCPGTSC0iqtFPgz" -H "WM_CONSUMER.INTIMESTAMP: 1352766116230" -H "WM_TENANT_ID: 0" -H "WM_VERTICAL_ID: 8" -H "WM_LOCALE_ID: eng_USA" -H "WM_DEVICE_ID: 123" -H "DEVICE_TYPE: browser" -H "USER_AGENT: Mozilla/5.0 (Windows NT 6.1; rv:12.0) Gecko/20120403211507 Firefox/12.0" -H "DEVICE_LANGUAGE: eng_USA" -H "DEVICE_OS: MAC OSX Lion" -H "DEVICE_TZ: 2012-04-25T12:00:00" -H "apiKey: 124A2BE7-60D0-48B2-86E1-F9F8139ABD6C" http://receipts-mobile-stg0.glb.prod.walmart.com/business/WM/transaction/${TC}/order -d '{}'
+echo -e "\n"
+}
+
+function getreceipt() {
+  echo -e "\n"
+  curl -H "apiKey: 124A2BE7-60D0-48B2-86E1-F9F8139ABD6C" receipts-mobile-stg0.glb.prod.walmart.com/business/WM/transaction/${1} | python -m json.tool
+  echo -e "\n"
+}
+
+export MYSQL_PATH=/usr/local/Cellar/mysql/5.6.27
+export PATH=$PATH:$MYSQL_PATH/bin
+
+
+# say -v Serena < /tmp/hal.txt -o /tmp/hal_serena6.aiff && lame -m m /tmp/hal_serena6.aiff /tmp/hal_serena6.mp3
+
+
+# Setting PATH for Python 3.6
+# The original version is saved in .bash_profile.pysave
+#PATH="/Library/Frameworks/Python.framework/Versions/3.6/bin:${PATH}"
+PATH="/usr/local/bin:${PATH}"
+export PATH
+
+. /install/git/contrib/completion/git-completion.bash
+
+if [ -f `brew --prefix`/etc/bash_completion ]; then
+    . `brew --prefix`/etc/bash_completion
+fi
+
+cdcurrent
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+nvm use stable
+
+npm config set package-lock false
+
+eval "$(pyenv init -)"
+pyenv shell 3.6.6
