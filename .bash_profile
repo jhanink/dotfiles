@@ -9,12 +9,14 @@ export CYPRESS_videoRecording=false
 
 #### foundry test generator
 
-export PL_ENV=wpqa
+export PL_ENV=avalon
 export PL_HOST=presencestag.com
 export PL_USERNAME=qauser
  export PL_PASSWORD=')$#=m$^Epa%b:7AWu$fg'
 # /end - foundry test generator
 alias foundry='python foundry.py run';
+alias foundrybasic='cdfoundry; foundry scripts/basic-seed-data.yaml > .output'
+alias tailfoundry='tail -f ~/projects/pl/foundry/.output'
 
 function runecsubset() {
   cypress run --spec cypress/integration/clients/clients-list-all.js;
@@ -39,18 +41,22 @@ alias cdcurrent='eval $CD_CURRENT'
 alias ccd='cdcurrent'
 alias cdvue='cd ~/projects/joe/vue'
 alias eb='vim ~/.bash_profile && source ~/.bash_profile'
+alias eeb='source ~/.bash_profile'
 alias ev='vim ~/.vimrc'
 alias et='vim ~/.tmux.conf'
 #alias tmux='tmux source ~/.tmux.conf'
 alias gitt='clear && git branch && git status'
 alias ggitt='find . -follow -maxdepth 1 -mindepth 1 -type d -exec sh -c "(echo {} && cd {} && git status -s && echo)" \;'
+alias gitr='cdeduclients; git checkout config/env/local.js; gitt'
+alias gitcm='git commit -am $@'
+alias gcm='git commit -am $@'
 alias reloadd='source ~/.bash_profile'
 alias bbn='babel-node'
 alias jsonpp='cat $1 | python -m json.tool'
 alias cdclapi='cd /Users/jhanink/projects/__archive/clapi && gitt'
 alias cdadmin='cdrex && cd app/src/rex/modules/admin'
 alias cdlightyear='cdpl && cd lightyear'
-alias cdwoody='cdpl && cd woody'
+alias cdwoody='cd ~/projects/pl/woody'
 alias cdeduclients='cdpl && cd edu-clients'
 alias cdlanding='cdpl && cd pl-landing'
 alias cdhamm='cdpl && cd hamm'
@@ -59,6 +65,7 @@ alias cdcypressshared='cdpl && cd pl-cypress-shared'
 alias cdmocks='cdpl && cd pg-rex/rex/app/src/rex/mocks'
 alias cdjoe='cd ~/projects/joe'
 alias cdtb='cd ~/projects/pl/test-data-builder'
+alias cdfoundry='cd ~/projects/pl/foundry'
 
 alias curbranch='echo "Current Branch [ ${__BRANCH} ] "'
 alias ngrok='/joe/install/ngrok'
@@ -81,39 +88,47 @@ alias gitlogshort='git log --pretty=format:"%h%x09%an%x09%ad%x09%s"'
 alias gitbranchcontains='git branch --contains $1'
 alias gitmergepath='git log --graph --oneline --no-abbrev-commit | grep "Merge branch '.*' into" | sed 's/^[^a-z0-9]*[a-z0-9]//g''
 alias _ecenv='node ./node-scripts/set-env --envkey=$1 && ecshowenv '
+alias SHA='git log | head -1 | cut -c 8- '
+alias grepa='grep -in -m 1 -A 20 $1 $2'
+alias grepb='grep -in -m 1 -B 20 $1 $2'
+alias greps='grep -in -m 1 -A 20 -B 20 $1 $2'
+alias ecclean='cdeduclients; rm -rf node_modules; rm -rf src/lib-components; npm i; gitt'
+
+function wakeenvs() {
+  wget https://abalone.apps.presencestag.com/c/landing > /dev/null;
+  wget https://avalon.apps.presencestag.com/c/landing > /dev/null;
+}
+
 function ecenv() {
 #  echo "----- copying ~/projects/local-configs/$1.js to ./config/env";
 #  cp ~/projects/pl/local-configs/"$1".js ./config/env;
   git checkout ./config/env/joe.js;
+  git checkout ./config/env/local.js;
   sed -i '' -e "s/wpqa/$1/g" ./config/env/joe.js;
-  sed -i '' -e "s/avalon/$1/g" ./config/env/joe.js;
+  sed -i '' -e "s/abalone/$1/g" ./config/env/joe.js;
+  sed -i '' -e "s/workplace/$1\.workplace/g" ./config/env/local.js;
+  sed -i '' -e "s/login/$1\.login/g" ./config/env/local.js;
+  sed -i '' -e "s/presencetest/presencestag/g" ./config/env/local.js;
   node ./node-scripts/set-env --envkey=joe;
   ecshowenv;
 }
 
-function landingenv() {
-  git checkout ./config/env/local.js;
-  sed -i '' -e "s/workplace/$1\.workplace/g" ./config/env/local.js;
-  sed -i '' -e "s/login/$1\.login/g" ./config/env/local.js;
-  node ./node-scripts/set-env --envkey=local;
-  landingshowenv;
-
-}
 alias _ecshowenv='echo "---------------------------------" && cat config/env/joe.js | grep apiWorkplace -A 1 | tail -1 | tr -d "[:space:]" | cut -c 14- | rev | cut -c 3- | rev && echo "---------------------------------"'
 function ecshowenv() {
   echo "---------------------------------" && cat config/env/joe.js | grep apiWorkplace -A 1 | tail -1 | tr -d "[:space:]" | cut -c 14- | rev | cut -c 3- | rev && echo "---------------------------------";
 }
-function landingshowenv() {
-  echo "---------------------------------" && cat config/env/local.js | grep apiWorkplace -A 1 | tail -1 | tr -d "[:space:]" | cut -c 36- | rev | cut -c 3- | rev && echo "---------------------------------";
-}
-
 alias _ecstart='clear && ecenv && npm run setup && clear && echo "---------- http://local.presencestag.com/c ----------" && sudo env "PATH=$PATH" ng serve --host=0.0.0.0 --disable-host-check --port=3010 --environment=joe --deploy-url=/c'
 function ecstart() {
+  echo "cdeduclients; git checkout config/env/local.js" | at now+20
   clear;
   ecenv "$1";
-  #npm run setup;
   npm run copy-repos
-  sudo env "PATH=$PATH" ng serve --host=0.0.0.0 --disable-host-check --port=3010 --environment=joe --deploy-url=/c;
+  #sudo env "PATH=$PATH" ng serve --host=0.0.0.0 --disable-host-check --port=3010 --environment=joe --deploy-url=/c;
+  npm start
+}
+
+function ecavalon() {
+  ecstart avalon
 }
 
 function startec() {
@@ -125,6 +140,7 @@ function startec() {
   npm start
 }
 function woodystart() {
+  cdwoody;
   clear;
   cp config/"$1"-config.js app/dev/woody/env-config.js;
   echo "----- using $1 env config -----";
@@ -132,7 +148,7 @@ function woodystart() {
 }
 function hammstart() {
   clear;
-  cp config/wpqa-config.js app/dev/hamm/env-config.js;
+  cp config/avalon-config.js app/dev/hamm/env-config.js;
   echo "----- using wpqa env config -----";
   grunt serve;
 }
@@ -141,11 +157,13 @@ function landingstart() {
   landingenv "$1";
   npm run setup;
   sudo env "PATH=$PATH" ng serve --host=0.0.0.0 --disable-host-check --port=3012 --environment=local --deploy-url=/landing;
+  git checkout ./config/env/local.js;
 }
 alias python='python3'
 alias pip='/usr/bin/python3 -m pip'
 
-alias wwebserver='python -m SimpleHTTPServer 8080'
+#alias wwebserver='python -m SimpleHTTPServer 8080'
+alias wwebserver='python3 -m http.server'
 function vapi() {
   cdapi;
   . .venv/wp/bin/activate;
@@ -220,6 +238,18 @@ function ggetleadlocal() {
 
 alias ggenusers='cd ~/projects/pl/pl-cypress-shared && npm run test-data-setup && cd - && ggetusers | u print --color'
 alias _ggenuserslocal='clear && ecshowenv && npm run test-data-setup -- envKey=joe && ggetuserslocal | u print --color && echo "----------" && uuserslocal'
+
+function ggenusersfoundry() {
+  clear
+  export PL_ENV=$1
+  echo "------------------"
+  env | grep PL_ENV
+  echo "------------------"
+  cd ~/projects/pl/foundry
+  foundry scripts/test-seed-data.yaml > /tmp/test-seed-data.txt
+  less /tmp/test-seed-data.txt
+}
+
 
 # generate test users against a stag k8s env
 # dependencies
@@ -447,7 +477,9 @@ export NVM_DIR="$HOME/.nvm"
 
 nvm use stable
 
-npm config set package-lock false
+#npm config set package-lock false
 
 eval "$(pyenv init -)"
 pyenv shell 3.6.6
+
+clear
