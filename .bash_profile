@@ -9,14 +9,24 @@ export CYPRESS_videoRecording=false
 
 #### foundry test generator
 
-export PL_ENV=avalon
+export _ENV=merlin
+export PL_ENV=$_ENV
+export AUTH_URL=https://${_ENV}.login.presencestag.com
+export APOLLO_URL=https://${_ENV}.workplace.presencestag.com/graphql/v1/
+export APIWORKPLACE_URL=https://${_ENV}.workplace.presencestag.com
 export PL_HOST=presencestag.com
 export PL_USERNAME=qauser
- export PL_PASSWORD=')$#=m$^Epa%b:7AWu$fg'
+export PL_PASSWORD=')$#=m$^Epa%b:7AWu$fg'
+
 # /end - foundry test generator
 alias foundry='python foundry.py run';
-alias foundrybasic='cdfoundry; foundry scripts/basic-seed-data.yaml > .output'
-alias tailfoundry='tail -f ~/projects/pl/foundry/.output'
+alias foundrybasic='cdfoundry; mv .output .output-BAK; echo "" > .output; foundry scripts/basic-seed-data-SLP-local-timezone.yaml >> .output'
+alias slpfoundrybasic='cdfoundry; mv .output .output-BAK; echo "" > .output; foundry scripts/basic-seed-data.yaml > .output'
+alias foundryfte='cdfoundry; echo "" > .output; echo "------ fte Users ---- " >> .output; foundry scripts/fte-data.yaml >> .output'
+alias foundrybitcoin='export PL_ENV=bitcoin; foundrybasic'
+alias tailfoundry='clear; tail -f ~/projects/pl/foundry/.output'
+alias foundryavalon='export PL_ENV=avalon; foundrybasic'
+alias foundrybitcoin='export PL_ENV=bitcoin; foundrybasic'
 
 function runecsubset() {
   cypress run --spec cypress/integration/clients/clients-list-all.js;
@@ -37,38 +47,41 @@ PATH=/usr/local/Cellar/vim/8.0.0600/bin:$PATH;
 #------- Aliases ----------
 if [ -z "$CD_CURRENT" ]; then export CD_CURRENT='cdeduclients'; fi;
 alias ll='ls -alGp'
-alias cdcurrent='eval $CD_CURRENT'
-alias ccd='cdcurrent'
-alias cdvue='cd ~/projects/joe/vue'
 alias eb='vim ~/.bash_profile && source ~/.bash_profile'
-alias eeb='source ~/.bash_profile'
 alias ev='vim ~/.vimrc'
 alias et='vim ~/.tmux.conf'
-#alias tmux='tmux source ~/.tmux.conf'
+
+alias cdcurrent='eval $CD_CURRENT'
+alias ccd='cdcurrent'
+alias cdjoe='cd ~/projects/joe'
+alias cdvue='cd ~/projects/joe/vue'
+alias cdeduclients='cdpl && cd edu-clients'
+alias cd2educlients='cdpl2 && cd edu-clients'
+alias cdclapi='cd /Users/jhanink/projects/__archive/clapi && gitt'
+alias cdwoody='cd ~/projects/pl/woody'
+alias cdfoundry='cd ~/projects/pl/foundry'
+
+alias stmux='tmux source ~/.tmux.conf'
 alias gitt='clear && git branch && git status'
+alias gitlog='clear && git branch && git log --oneline'
+alias gitlogstat='git log --stat'
+alias gitlogname='git log --name-only'
+alias gitlogdiff='git log -p'
+alias gitlogshort='git log --pretty=format:"%h%x09%an%x09%ad%x09%s"'
 alias ggitt='find . -follow -maxdepth 1 -mindepth 1 -type d -exec sh -c "(echo {} && cd {} && git status -s && echo)" \;'
+alias gittr='clear && gbranchr && git status'
 alias gitr='cdeduclients; git checkout config/env/local.js; gitt'
 alias gitcm='git commit -am $@'
 alias gcm='git commit -am $@'
+alias gbranchr='git fetch --prune origin && git branch -a'
 alias reloadd='source ~/.bash_profile'
 alias bbn='babel-node'
 alias jsonpp='cat $1 | python -m json.tool'
-alias cdclapi='cd /Users/jhanink/projects/__archive/clapi && gitt'
-alias cdadmin='cdrex && cd app/src/rex/modules/admin'
-alias cdlightyear='cdpl && cd lightyear'
-alias cdwoody='cd ~/projects/pl/woody'
-alias cdeduclients='cdpl && cd edu-clients'
-alias cdlanding='cdpl && cd pl-landing'
-alias cdhamm='cdpl && cd hamm'
-alias cdapi='cdpl && cd api-workplace'
-alias cdcypressshared='cdpl && cd pl-cypress-shared'
-alias cdmocks='cdpl && cd pg-rex/rex/app/src/rex/mocks'
-alias cdjoe='cd ~/projects/joe'
-alias cdtb='cd ~/projects/pl/test-data-builder'
-alias cdfoundry='cd ~/projects/pl/foundry'
+
+alias vimfoundry='cdfoundry; vim .output'
 
 alias curbranch='echo "Current Branch [ ${__BRANCH} ] "'
-alias ngrok='/joe/install/ngrok'
+alias ngrok='~/joe/install/ngrok'
 
 alias pip='.venv/bin/pip3'
 
@@ -80,11 +93,7 @@ alias gitreflog='git log -g --abbrev-commit --pretty=oneline'
 alias showlinks='ll node_modules | grep ^l && ll node_modules | grep ^l | wc -l'
 #PROMPT_COMMAND='echo -ne "\033]0;\007"'
 alias cypress='./node_modules/.bin/cypress'
-alias gitlog='git log --stat'
 alias gitusers='git shortlog -sne'
-alias gitlogstat='git log --name-only'
-alias gitlogdiff='git log -p'
-alias gitlogshort='git log --pretty=format:"%h%x09%an%x09%ad%x09%s"'
 alias gitbranchcontains='git branch --contains $1'
 alias gitmergepath='git log --graph --oneline --no-abbrev-commit | grep "Merge branch '.*' into" | sed 's/^[^a-z0-9]*[a-z0-9]//g''
 alias _ecenv='node ./node-scripts/set-env --envkey=$1 && ecshowenv '
@@ -93,6 +102,25 @@ alias grepa='grep -in -m 1 -A 20 $1 $2'
 alias grepb='grep -in -m 1 -B 20 $1 $2'
 alias greps='grep -in -m 1 -A 20 -B 20 $1 $2'
 alias ecclean='cdeduclients; rm -rf node_modules; rm -rf src/lib-components; npm i; gitt'
+alias g='grep'
+alias llintprettier='cdoo && yarn lint && yarn dev:prettier'
+
+function cctemplates() {
+  for i in {html,less,ts};
+  do
+    cp ~/joe/component-templates/file.component.$i ./$1.component.$i;
+    sed -i '' "s/FILE/$1/g" "$1.component.$i";
+    sed -i '' "s/CLASSNAME/$2/g" "$1.component.$i";
+  done
+}
+
+function uutemplates() {
+  for i in {html,less,ts};
+  do
+    sed -i '' "s/FILE/$1/g" "$1.component.$i";
+    sed -i '' "s/CLASSNAME/$2/g" "$1.component.$i";
+  done
+}
 
 function wakeenvs() {
   wget https://abalone.apps.presencestag.com/c/landing > /dev/null;
@@ -100,35 +128,53 @@ function wakeenvs() {
 }
 
 function ecenv() {
-#  echo "----- copying ~/projects/local-configs/$1.js to ./config/env";
-#  cp ~/projects/pl/local-configs/"$1".js ./config/env;
-  git checkout ./config/env/joe.js;
   git checkout ./config/env/local.js;
-  sed -i '' -e "s/wpqa/$1/g" ./config/env/joe.js;
-  sed -i '' -e "s/abalone/$1/g" ./config/env/joe.js;
-  sed -i '' -e "s/workplace/$1\.workplace/g" ./config/env/local.js;
-  sed -i '' -e "s/login/$1\.login/g" ./config/env/local.js;
+  sed -i '' -e "s/\/workplace/\/$1\.workplace/g" ./config/env/local.js;
+  sed -i '' -e "s/\/login/\/$1\.login/g" ./config/env/local.js;
+  sed -i '' -e "s/\/apps/\/$1\.apps/g" ./config/env/local.js;
   sed -i '' -e "s/presencetest/presencestag/g" ./config/env/local.js;
-  node ./node-scripts/set-env --envkey=joe;
+  node ./node-scripts/set-env --envkey=local;
   ecshowenv;
 }
 
 alias _ecshowenv='echo "---------------------------------" && cat config/env/joe.js | grep apiWorkplace -A 1 | tail -1 | tr -d "[:space:]" | cut -c 14- | rev | cut -c 3- | rev && echo "---------------------------------"'
 function ecshowenv() {
-  echo "---------------------------------" && cat config/env/joe.js | grep apiWorkplace -A 1 | tail -1 | tr -d "[:space:]" | cut -c 14- | rev | cut -c 3- | rev && echo "---------------------------------";
+  echo "---------------------------------" && cat config/env/local.js | grep apiWorkplace -A 1 | tail -1 | tr -d "[:space:]" | cut -c 44- | rev | cut -c 3- | rev && echo "---------------------------------";
 }
 alias _ecstart='clear && ecenv && npm run setup && clear && echo "---------- http://local.presencestag.com/c ----------" && sudo env "PATH=$PATH" ng serve --host=0.0.0.0 --disable-host-check --port=3010 --environment=joe --deploy-url=/c'
+
 function ecstart() {
-  echo "cdeduclients; git checkout config/env/local.js" | at now+20
+  #echo "cdeduclients; git checkout config/env/local.js" | at now + 1 minute
   clear;
-  ecenv "$1";
+  #ecenv "$1";
   npm run copy-repos
   #sudo env "PATH=$PATH" ng serve --host=0.0.0.0 --disable-host-check --port=3010 --environment=joe --deploy-url=/c;
   npm start
 }
 
+function eclivedev() {
+  echo "cdeduclients; git checkout config/env/local.js" | at now+120
+  cp config/env/livedev.js src/app/env-config.js;
+  clear;
+  echo "===== starting LIVE DEV server ====="
+  npm run copy-repos
+  npm start
+}
+
 function ecavalon() {
   ecstart avalon
+}
+
+function ecbitcoin() {
+  ecstart bitcoin
+}
+
+function ecmerlin() {
+  ecstart merlin
+}
+
+function woodybitcoin() {
+  woodystart bitcoin
 }
 
 function startec() {
@@ -139,6 +185,7 @@ function startec() {
   export APPS_URL=https://$PL_ENV.apps.presencestag.com
   npm start
 }
+
 function woodystart() {
   cdwoody;
   clear;
@@ -169,6 +216,7 @@ function vapi() {
   . .venv/wp/bin/activate;
   alias pip='/Users/jhanink/projects/pl/api-workplace/.venv/wp/bin/pip3'
 }
+
 
 HISTCONTROL=ignorespace
 
@@ -273,7 +321,12 @@ alias rruntestsci='npm run test-data-setup -- scenarioset=e2eCI && cypress run -
 #------ PL stuff ------------
 
 export PL_PROJECTS_DIR=~/projects/pl
+export PL_PROJECTS2_DIR=~/projects/pl2
+export SK_PROJECTS_DIR=~/projects/sk
+alias cdsk='cd $SK_PROJECTS_DIR'
+alias cdoo='cd $SK_PROJECTS_DIR/online-office-vue'
 alias cdpl='cd $PL_PROJECTS_DIR'
+alias cdpl2='cd $PL_PROJECTS2_DIR'
 alias cdtable='cd $PL_PROJECTS_DIR/pl-table'
 alias cdlightyear='cd $PL_PROJECTS_DIR/lightyear'
 alias cdtoys='cd $PL_PROJECTS_DIR/toys'
@@ -446,12 +499,10 @@ function showbranch() {
 export CLAPI_SET_DATATYPE=ON
 #export CLAPI_SET_MOCKS=ON
 
-
 ### OLD STUFF ###
 
 export MYSQL_PATH=/usr/local/Cellar/mysql/5.6.27
 export PATH=$PATH:$MYSQL_PATH/bin
-
 
 # say -v Serena < /tmp/hal.txt -o /tmp/hal_serena6.aiff && lame -m m /tmp/hal_serena6.aiff /tmp/hal_serena6.mp3
 
@@ -462,11 +513,12 @@ export PATH=$PATH:$MYSQL_PATH/bin
 PATH="/usr/local/bin:${PATH}"
 export PATH
 
-. /install/git/contrib/completion/git-completion.bash
+#. ~/install/git/contrib/completion/git-completion.bash
+#if [ -f `brew --prefix`/etc/bash_completion ]; then
+#    . `brew --prefix`/etc/bash_completion
+#fi
 
-if [ -f `brew --prefix`/etc/bash_completion ]; then
-    . `brew --prefix`/etc/bash_completion
-fi
+[[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]] && . "/usr/local/etc/profile.d/bash_completion.sh"
 
 cdcurrent
 
@@ -482,4 +534,5 @@ nvm use stable
 eval "$(pyenv init -)"
 pyenv shell 3.6.6
 
-clear
+export BASH_SILENCE_DEPRECATION_WARNING=1
+#clear

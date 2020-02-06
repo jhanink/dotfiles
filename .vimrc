@@ -164,4 +164,4 @@ set title
 "call pathogen#helptags()
 
 set novisualbell
-
+set ignorecase
