@@ -9,7 +9,7 @@ export CYPRESS_videoRecording=false
 
 #### foundry test generator
 
-export _ENV=merlin
+export _ENV=movies
 export PL_ENV=$_ENV
 export AUTH_URL=https://${_ENV}.login.presencestag.com
 export APOLLO_URL=https://${_ENV}.workplace.presencestag.com/graphql/v1/
@@ -21,7 +21,7 @@ export PL_PASSWORD=')$#=m$^Epa%b:7AWu$fg'
 # /end - foundry test generator
 alias foundry='python foundry.py run';
 alias foundrybasic='cdfoundry; mv .output .output-BAK; echo "" > .output; foundry scripts/basic-seed-data-SLP-local-timezone.yaml >> .output'
-alias slpfoundrybasic='cdfoundry; mv .output .output-BAK; echo "" > .output; foundry scripts/basic-seed-data.yaml > .output'
+alias basicfoundry='cdfoundry; mv .output .output-BAK; echo "" > .output; foundry scripts/basic-seed-data.yaml > .output'
 alias foundryfte='cdfoundry; echo "" > .output; echo "------ fte Users ---- " >> .output; foundry scripts/fte-data.yaml >> .output'
 alias foundrybitcoin='export PL_ENV=bitcoin; foundrybasic'
 alias tailfoundry='clear; tail -f ~/projects/pl/foundry/.output'
@@ -55,7 +55,7 @@ alias cdcurrent='eval $CD_CURRENT'
 alias ccd='cdcurrent'
 alias cdjoe='cd ~/projects/joe'
 alias cdvue='cd ~/projects/joe/vue'
-alias cdeduclients='cdpl && cd edu-clients'
+alias cdeduclients='cdpl && cd edu-clients && clear'
 alias cd2educlients='cdpl2 && cd edu-clients'
 alias cdclapi='cd /Users/jhanink/projects/__archive/clapi && gitt'
 alias cdwoody='cd ~/projects/pl/woody'
@@ -103,7 +103,12 @@ alias grepb='grep -in -m 1 -B 20 $1 $2'
 alias greps='grep -in -m 1 -A 20 -B 20 $1 $2'
 alias ecclean='cdeduclients; rm -rf node_modules; rm -rf src/lib-components; npm i; gitt'
 alias g='grep'
+
+export SK_PROJECTS_DIR=~/projects/sk
+alias cdsk='cd $SK_PROJECTS_DIR'
+alias cdoo='cd $SK_PROJECTS_DIR/online-office-vue && clear'
 alias llintprettier='cdoo && yarn lint && yarn dev:prettier'
+alias oostart='cdoo; yarn serve'
 
 function cctemplates() {
   for i in {html,less,ts};
@@ -171,6 +176,10 @@ function ecbitcoin() {
 
 function ecmerlin() {
   ecstart merlin
+}
+
+function ecmovies() {
+  ecstart movies
 }
 
 function woodybitcoin() {
@@ -322,9 +331,6 @@ alias rruntestsci='npm run test-data-setup -- scenarioset=e2eCI && cypress run -
 
 export PL_PROJECTS_DIR=~/projects/pl
 export PL_PROJECTS2_DIR=~/projects/pl2
-export SK_PROJECTS_DIR=~/projects/sk
-alias cdsk='cd $SK_PROJECTS_DIR'
-alias cdoo='cd $SK_PROJECTS_DIR/online-office-vue'
 alias cdpl='cd $PL_PROJECTS_DIR'
 alias cdpl2='cd $PL_PROJECTS2_DIR'
 alias cdtable='cd $PL_PROJECTS_DIR/pl-table'
