@@ -9,14 +9,24 @@ export CYPRESS_videoRecording=false
 
 #### foundry test generator
 
-export _ENV=movies
-export PL_ENV=$_ENV
-export AUTH_URL=https://${_ENV}.login.presencestag.com
-export APOLLO_URL=https://${_ENV}.workplace.presencestag.com/graphql/v1/
-export APIWORKPLACE_URL=https://${_ENV}.workplace.presencestag.com
+export PL_ENV=movies
+export PL_APP_DIR=~/projects/pl/edu-clients
+export PL_FOUNDRY_DIR=~/projects/pl/foundry
+export PL_FOUNDRY_YAML_FILE=basic-seed-data-SLP-local-timezone.yaml
+
+export AUTH_URL=https://${PL_ENV}.login.presencestag.com
+export APIWORKPLACE_URL=https://${PL_ENV}.workplace.presencestag.com
+export APOLLO_URL=https://${PL_ENV}.workplace.presencestag.com/graphql/v1/
+export APPS_URL=https://${PL_ENV}.apps.presencestag.com
+export PLATFORM_URL=https://${PL_ENV}.platform.presencestag.com
+
 export PL_HOST=presencestag.com
 export PL_USERNAME=qauser
 export PL_PASSWORD=')$#=m$^Epa%b:7AWu$fg'
+
+export PL_CYPRESS_DIR=$PL_APP_DIR/cypress
+export PL_CYPRESS_SCRIPTS_DIR=$PL_APP_DIR/cypress-scripts
+
 
 # /end - foundry test generator
 alias foundry='python foundry.py run';
@@ -27,6 +37,7 @@ alias foundrybitcoin='export PL_ENV=bitcoin; foundrybasic'
 alias tailfoundry='clear; tail -f ~/projects/pl/foundry/.output'
 alias foundryavalon='export PL_ENV=avalon; foundrybasic'
 alias foundrybitcoin='export PL_ENV=bitcoin; foundrybasic'
+alias ccr='npm run copy-repos'
 
 function runecsubset() {
   cypress run --spec cypress/integration/clients/clients-list-all.js;
@@ -56,6 +67,7 @@ alias ccd='cdcurrent'
 alias cdjoe='cd ~/projects/joe'
 alias cdvue='cd ~/projects/joe/vue'
 alias cdeduclients='cdpl && cd edu-clients && clear'
+alias cdcompslib='cdpl && cd pl-components-ng2/src/lib && clear'
 alias cd2educlients='cdpl2 && cd edu-clients'
 alias cdclapi='cd /Users/jhanink/projects/__archive/clapi && gitt'
 alias cdwoody='cd ~/projects/pl/woody'
@@ -109,6 +121,7 @@ alias cdsk='cd $SK_PROJECTS_DIR'
 alias cdoo='cd $SK_PROJECTS_DIR/online-office-vue && clear'
 alias llintprettier='cdoo && yarn lint && yarn dev:prettier'
 alias oostart='cdoo; yarn serve'
+alias ecwatch='cdcompslib && pwd && fswatch -0 . | while read -d "" f; do echo $f; rsync -a . ~/projects/pl/edu-clients/src/lib-components; done'
 
 function cctemplates() {
   for i in {html,less,ts};

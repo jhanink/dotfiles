@@ -40,7 +40,7 @@ call plug#end()
 if &diff
     colorscheme jellybeans
 else
-    autocmd VimEnter * NERDTree
+"    autocmd VimEnter * NERDTree
     autocmd VimEnter * if argc() != 0 && !exists("s:std_in") | wincmd p | endif
 
     set background=dark
@@ -76,7 +76,7 @@ let g:CommandTSmartCase = 1
 "let g:CommandTIgnoreCase = 0
 let g:EasyMotion_keys = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ;'
 let g:EasyMotion_enter_jump_first = 1
-let NERDTreeShowHidden=1
+let NERDTreeShowHidden = 1 
 let NERDTreeMinimalUI = 1
 let NERDTreeDirArrows = 1
 
@@ -116,7 +116,7 @@ noremap <leader>r :TagbarToggle<CR>
 " <Ctrl-l> redraws the screen and removes any search highlighting.
 nnoremap <silent> <C-l> :nohl<CR><C-l>
 
-let g:netrw_liststyle=3
+" let g:netrw_liststyle=3
 
 set laststatus=2
 set number
