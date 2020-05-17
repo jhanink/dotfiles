@@ -3,7 +3,7 @@ _pwd=`pwd`
 export EDITOR='vim'
 
 
-export PL_ENV=movies
+export PL_ENV=am
 export PL_APP_DIR=~/projects/pl/edu-clients
 export PL_FOUNDRY_DIR=~/projects/pl/foundry
 export YAML_FILE=basic-seed-data-v2.yaml
@@ -50,7 +50,7 @@ alias cdpl='cd $PL_PROJECTS_DIR'
 alias cdeduclients='cdpl && cd edu-clients && clear'
 alias cdfoundry='cd ~/projects/pl/foundry'
 alias cdcypressscripts='cd ~/projects/pl/edu-clients/cypress-scripts'
-alias cdcompslib='cdpl && cd pl-components/ng2/src/lib && clear'
+alias cdcompslib='cdpl && cd pl-components-ng2/src/lib && clear'
 
 alias gitt='clear && git branch && git status'
 alias gitlog='clear && git branch && git log --oneline'
@@ -110,6 +110,17 @@ function plversiondrift() {
 }
 
 function ecstart() {
+  clear
+  echo
+  echo "=================================="
+  echo "  Using env: ${PL_ENV}"
+  echo "=================================="
+  echo
+  #npm run copy-repos
+  npm start
+}
+
+function _ecstart() {
   #echo "cdeduclients; git checkout config/env/local.js" | at now + 1 minute
   clear;
   #ecenv "$1";
