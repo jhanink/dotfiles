@@ -3,10 +3,10 @@ _pwd=`pwd`
 export EDITOR='vim'
 
 
-export PL_ENV=am
+export PL_ENV=am5
 export PL_APP_DIR=~/projects/pl/edu-clients
 export PL_FOUNDRY_DIR=~/projects/pl/foundry
-export YAML_FILE=basic-seed-data-v2.yaml
+export YAML_FILE=basic-seed-data-v2-cam.yaml
 
 export AUTH_URL=https://${PL_ENV}.login.presencestag.com
 export APIWORKPLACE_URL=https://${PL_ENV}.workplace.presencestag.com
@@ -48,6 +48,7 @@ alias stmux='tmux source ~/.tmux.conf'
 
 alias cdpl='cd $PL_PROJECTS_DIR'
 alias cdeduclients='cdpl && cd edu-clients && clear'
+alias cdwoody='cdpl && cd woody && clear'
 alias cdfoundry='cd ~/projects/pl/foundry'
 alias cdcypressscripts='cd ~/projects/pl/edu-clients/cypress-scripts'
 alias cdcompslib='cdpl && cd pl-components-ng2/src/lib && clear'
@@ -118,6 +119,18 @@ function ecstart() {
   echo
   #npm run copy-repos
   npm start
+}
+
+function woodystart() {
+  clear
+  echo
+  echo "=================================="
+  echo "  Using env: ${PL_ENV}"
+  echo "=================================="
+  echo
+  #npm run copy-repos
+  # PL_ENV=am5 grunt serve
+  grunt serve
 }
 
 function _ecstart() {
