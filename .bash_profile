@@ -3,16 +3,34 @@ _pwd=`pwd`
 export EDITOR='vim'
 
 
-export PL_ENV=am5
 export PL_APP_DIR=~/projects/pl/edu-clients
 export PL_FOUNDRY_DIR=~/projects/pl/foundry
-export YAML_FILE=basic-seed-data-v2-cam.yaml
+export YAML_FILE=district-users.yaml
+export PL_ENV=joedev
 
-export AUTH_URL=https://${PL_ENV}.login.presencestag.com
-export APIWORKPLACE_URL=https://${PL_ENV}.workplace.presencestag.com
-export APOLLO_URL=https://${PL_ENV}.workplace.presencestag.com/graphql/v1/
-export APPS_URL=https://${PL_ENV}.apps.presencestag.com
-export PLATFORM_URL=https://${PL_ENV}.platform.presencestag.com
+export PL_TEST_RECORD_VIDEO=0
+
+#export YAML_FILE=basic-seed-data-v4.yaml
+#export YAML_FILE=mult-org-cam.yaml
+
+#export PL_ENV=ipadsafari
+#export PL_ENV=ipaddev
+
+function showenv() {
+  echo $PL_ENV
+  echo $AUTH_URL
+}
+
+function setenv() {
+  export AUTH_URL=https://${PL_ENV}.login.presencestag.com
+  export APIWORKPLACE_URL=https://${PL_ENV}.workplace.presencestag.com
+  export APOLLO_URL=https://${PL_ENV}.workplace.presencestag.com/graphql/v1/
+  export APPS_URL=https://${PL_ENV}.apps.presencestag.com
+  export PLATFORM_URL=https://${PL_ENV}.platform.presencestag.com
+  showenv
+}
+
+setenv
 
 export PL_HOST=presencestag.com
 export PL_USERNAME=qauser
@@ -36,22 +54,31 @@ alias showlinks='ll node_modules | grep ^l && ll node_modules | grep ^l | wc -l'
 
 alias foundry='python foundry.py run';
 alias foundrybasic='cdeduclients; npm run cy-seed'
-alias tailfoundry='clear; tail -f ~/projects/pl/foundry/.output--basic-seed-data-v2.yaml'
+alias tailfoundry='clear; tail -f ~/projects/pl/foundry/.output--$YAML_FILE'
 
 alias ll='ls -alGp'
 alias eb='vim ~/.bash_profile && source ~/.bash_profile'
-alias ebr='source ~/.bash_profile'
+alias ebb='source ~/.bash_profile'
 alias ev='vim ~/.vimrc'
 alias et='vim ~/.tmux.conf'
 alias stmux='tmux source ~/.tmux.conf'
 
 
+alias cdgt='cd $PL_PROJECTS_DIR/gt'
 alias cdpl='cd $PL_PROJECTS_DIR'
+alias cdpl2='cd $PL_PROJECTS2_DIR'
 alias cdeduclients='cdpl && cd edu-clients && clear'
+alias cdec2='cdpl2 && cd edu-clients && clear'
+alias cd1='cdeduclients'
+alias cd2='cdec2'
 alias cdwoody='cdpl && cd woody && clear'
+alias cdroom='cdpl && cd room && clear'
 alias cdfoundry='cd ~/projects/pl/foundry'
 alias cdcypressscripts='cd ~/projects/pl/edu-clients/cypress-scripts'
 alias cdcompslib='cdpl && cd pl-components-ng2/src/lib && clear'
+alias cdrn='cdpl && cd nativedev'
+alias adminlogin='open https://${PL_ENV}.login.presencestag.com/admin/user/user'
+alias adminworkplace='open https://${PL_ENV}.workplace.presencestag.com/admin'
 
 alias gitt='clear && git branch && git status'
 alias gitlog='clear && git branch && git log --oneline'
@@ -110,26 +137,37 @@ function plversiondrift() {
   done
 }
 
-function ecstart() {
+function roomstart() {
+#  export PL_ENV=ipadsafari
+  setenv
   clear
   echo
   echo "=================================="
   echo "  Using env: ${PL_ENV}"
   echo "=================================="
   echo
-  #npm run copy-repos
+  npm run ipad-dev
+}
+
+function ecstart() {
+  setenv
+  clear
+  echo
+  echo "=================================="
+  echo "  Using env: ${PL_ENV}"
+  echo "=================================="
+  echo
   npm start
 }
 
 function woodystart() {
+  setenv
   clear
   echo
   echo "=================================="
   echo "  Using env: ${PL_ENV}"
   echo "=================================="
   echo
-  #npm run copy-repos
-  # PL_ENV=am5 grunt serve
   grunt serve
 }
 
@@ -151,11 +189,6 @@ function eclivedev() {
   npm start
 }
 
-
-function ecmovies() {
-  ecstart movies
-}
-
 function gittt {
   clear
   _originalDir=`pwd`
@@ -174,6 +207,9 @@ function gittt {
   cd $_originalDir
 }
 
+if command -v pyenv 1>/dev/null 2>&1; then
+  eval "$(pyenv init -)"
+fi
 
 
 alias python='python3'
@@ -238,19 +274,17 @@ export GITAWAREPROMPT=~/.bash/git-aware-prompt
 source "${GITAWAREPROMPT}/main.sh"
 export PS1="→ \W \[$txtcyn\]\$git_branch\[$txtred\]\$git_dirty\[$txtrst\]\$ "
 
-export MYSQL_PATH=/usr/local/Cellar/mysql/5.6.27
-export PATH=$PATH:$MYSQL_PATH/bin
+# export MYSQL_PATH=/usr/local/Cellar/mysql/5.6.27
+# export PATH=$PATH:$MYSQL_PATH/bin
 
 # say -v Serena < /tmp/hal.txt -o /tmp/hal_serena6.aiff && lame -m m /tmp/hal_serena6.aiff /tmp/hal_serena6.mp3
 
 
 
-PATH=/usr/local/Cellar/vim/8.0.0600/bin:$PATH;
+# PATH=/usr/local/Cellar/vim/8.0.0600/bin:$PATH;
 
-# Setting PATH for Python 3.6
-# The original version is saved in .bash_profile.pysave
-#PATH="/Library/Frameworks/Python.framework/Versions/3.6/bin:${PATH}"
-PATH="/usr/local/bin:${PATH}"
+# Setting PATH for Python
+PATH="/Users/jhanink/.pyenv/shims:/usr/local/bin:${PATH}"
 export PATH
 
 
@@ -266,12 +300,13 @@ nvm use stable
 
 #npm config set package-lock false
 
-eval "$(pyenv init -)"
-pyenv shell 3.6.6
+# eval "$(pyenv init -)"
+# pyenv shell 3.9.1
 
 export BASH_SILENCE_DEPRECATION_WARNING=1
 
-cdeduclients
+
+#cdeduclients
 
 
 #---------------------------- END ----------------------------
