@@ -5,8 +5,9 @@ export EDITOR='vim'
 
 export PL_APP_DIR=~/projects/pl/edu-clients
 export PL_FOUNDRY_DIR=~/projects/pl/foundry
-export YAML_FILE=district-users.yaml
-export PL_ENV=joedev
+export YAML_FILE=bsd.yaml
+export PL_ENV=pldev
+export PL_ENV=env16
 
 export PL_TEST_RECORD_VIDEO=0
 
@@ -17,24 +18,45 @@ export PL_TEST_RECORD_VIDEO=0
 #export PL_ENV=ipaddev
 
 function showenv() {
-  echo $PL_ENV
-  echo $AUTH_URL
+  echo
+  echo "=================================="
+  echo  $PL_ENV
+  echo  $AUTH_URL
+  echo "=================================="
+  echo
 }
 
 function setenv() {
-  export AUTH_URL=https://${PL_ENV}.login.presencestag.com
-  export APIWORKPLACE_URL=https://${PL_ENV}.workplace.presencestag.com
-  export APOLLO_URL=https://${PL_ENV}.workplace.presencestag.com/graphql/v1/
-  export APPS_URL=https://${PL_ENV}.apps.presencestag.com
-  export PLATFORM_URL=https://${PL_ENV}.platform.presencestag.com
+  export APPS_URL=https://$PL_ENV-apps.presencek8s.com
+  export AUTH_URL=https://$PL_ENV-login.presencek8s.com
+  export APIWORKPLACE_URL=https://$PL_ENV-workplace.presencek8s.com
+  export APOLLO_URL=https://$PL_ENV-workplace.presencek8s.com/graphql/v1/
+  export PLATFORM_URL=https://$PL_ENV-platform.presencek8s.com
+
+  export PL_APPS=$APPS_URL
+  export PL_LOGIN=$AUTH_URL
+  export PL_WORKPLACE=$APIWORKPLACE_URL
+  export PL_PLATFORM=$PLATFORM_URL
+
+  #woody (pl-core)
+  export PL_APPS_URL=$APPS_URL
+  export PL_LOGIN_URL=$AUTH_URL
+  export PL_WORKPLACE_URL=$APIWORKPLACE_URL
+  export PL_PLATFORM_URL=$PLATFORM_URL
+
+  export PL_HOST=presencek8s.com
+  export PL_USERNAME=qauser
+  export PL_PASSWORD=qauser123
+
+#  export PL_HOST=presencestag.com
+#  export PL_USERNAME=qauser
+#  export PL_PASSWORD=')$#=m$^Epa%b:7AWu$fg'
+
   showenv
 }
 
 setenv
 
-export PL_HOST=presencestag.com
-export PL_USERNAME=qauser
-export PL_PASSWORD=')$#=m$^Epa%b:7AWu$fg'
 
 export PL_CYPRESS_DIR=$PL_APP_DIR/cypress
 export PL_CYPRESS_SCRIPTS_DIR=$PL_APP_DIR/cypress-scripts
@@ -111,6 +133,7 @@ alias ecwatch='cdcompslib && pwd && fswatch -0 . | while read -d "" f; do echo $
 alias plshowversiondrift='plversiondrift | column -t'
 
 alias wwebserver='python3 -m http.server'
+alias roominstall='nvm use v10.24.0 && npm i && nvm use v16.0.0'
 
 #-----------------------------------
 
@@ -141,33 +164,21 @@ function roomstart() {
 #  export PL_ENV=ipadsafari
   setenv
   clear
-  echo
-  echo "=================================="
-  echo "  Using env: ${PL_ENV}"
-  echo "=================================="
-  echo
+  showenv
   npm run ipad-dev
 }
 
 function ecstart() {
   setenv
   clear
-  echo
-  echo "=================================="
-  echo "  Using env: ${PL_ENV}"
-  echo "=================================="
-  echo
+  showenv
   npm start
 }
 
 function woodystart() {
   setenv
   clear
-  echo
-  echo "=================================="
-  echo "  Using env: ${PL_ENV}"
-  echo "=================================="
-  echo
+  showenv
   grunt serve
 }
 
@@ -207,10 +218,11 @@ function gittt {
   cd $_originalDir
 }
 
+export PYTHON_CONFIGURE_OPTS="--enable-framework"
+
 if command -v pyenv 1>/dev/null 2>&1; then
   eval "$(pyenv init -)"
 fi
-
 
 alias python='python3'
 alias pip='/usr/bin/python3 -m pip'
@@ -287,7 +299,6 @@ export PS1="→ \W \[$txtcyn\]\$git_branch\[$txtred\]\$git_dirty\[$txtrst\]\$ "
 PATH="/Users/jhanink/.pyenv/shims:/usr/local/bin:${PATH}"
 export PATH
 
-
 [[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]] && . "/usr/local/etc/profile.d/bash_completion.sh"
 
 
@@ -300,8 +311,8 @@ nvm use stable
 
 #npm config set package-lock false
 
-# eval "$(pyenv init -)"
-# pyenv shell 3.9.1
+#eval "$(pyenv init -)"
+#pyenv shell 3.6.4
 
 export BASH_SILENCE_DEPRECATION_WARNING=1
 
