@@ -2,27 +2,22 @@ _pwd=`pwd`
 
 export EDITOR='vim'
 
-
 export PL_APP_DIR=~/projects/pl/edu-clients
 export PL_FOUNDRY_DIR=~/projects/pl/foundry
-export YAML_FILE=bsd.yaml
-export PL_ENV=pldev
-export PL_ENV=env16
+export PL_ENV=env30
 
 export PL_TEST_RECORD_VIDEO=0
 
-#export YAML_FILE=basic-seed-data-v4.yaml
+export YAML_FILE=bsd.yaml
 #export YAML_FILE=mult-org-cam.yaml
-
-#export PL_ENV=ipadsafari
-#export PL_ENV=ipaddev
+#export YAML_FILE=am-script-v7.yaml
+#export YAML_FILE=fte-data.yaml
 
 function showenv() {
   echo
-  echo "=================================="
+  echo "======================"
   echo  $PL_ENV
-  echo  $AUTH_URL
-  echo "=================================="
+  echo "======================"
   echo
 }
 
@@ -38,24 +33,13 @@ function setenv() {
   export PL_WORKPLACE=$APIWORKPLACE_URL
   export PL_PLATFORM=$PLATFORM_URL
 
-  #woody (pl-core)
-  export PL_APPS_URL=$APPS_URL
-  export PL_LOGIN_URL=$AUTH_URL
-  export PL_WORKPLACE_URL=$APIWORKPLACE_URL
-  export PL_PLATFORM_URL=$PLATFORM_URL
-
   export PL_HOST=presencek8s.com
   export PL_USERNAME=qauser
   export PL_PASSWORD=qauser123
 
-#  export PL_HOST=presencestag.com
-#  export PL_USERNAME=qauser
-#  export PL_PASSWORD=')$#=m$^Epa%b:7AWu$fg'
-
   showenv
 }
 
-setenv
 
 
 export PL_CYPRESS_DIR=$PL_APP_DIR/cypress
@@ -63,7 +47,6 @@ export PL_CYPRESS_SCRIPTS_DIR=$PL_APP_DIR/cypress-scripts
 
 export CYPRESS_numTestsKeptInMemory=500
 export CYPRESS_videoRecording=false
-
 
 HISTCONTROL=ignorespace
 
@@ -126,6 +109,7 @@ alias g='grep'
 alias jsonpp='cat $1 | python -m json.tool'
 alias ngrok='~/joe/install/ngrok'
 alias pip='.venv/bin/pip3'
+
 alias cyhg='/Applications/Cypress.app/Contents/MacOS/Cypress --project ${_pwd} --show-headless-gui'
 
 alias ecwatch='cdcompslib && pwd && fswatch -0 . | while read -d "" f; do echo $f; rsync -a . ~/projects/pl/edu-clients/src/lib-components; done'
@@ -133,7 +117,7 @@ alias ecwatch='cdcompslib && pwd && fswatch -0 . | while read -d "" f; do echo $
 alias plshowversiondrift='plversiondrift | column -t'
 
 alias wwebserver='python3 -m http.server'
-alias roominstall='nvm use v10.24.0 && npm i && nvm use v16.0.0'
+
 
 #-----------------------------------
 
@@ -175,48 +159,6 @@ function ecstart() {
   npm start
 }
 
-function woodystart() {
-  setenv
-  clear
-  showenv
-  grunt serve
-}
-
-function _ecstart() {
-  #echo "cdeduclients; git checkout config/env/local.js" | at now + 1 minute
-  clear;
-  #ecenv "$1";
-  npm run copy-repos
-  #sudo env "PATH=$PATH" ng serve --host=0.0.0.0 --disable-host-check --port=3010 --environment=joe --deploy-url=/c;
-  npm start
-}
-
-function eclivedev() {
-  echo "cdeduclients; git checkout config/env/local.js" | at now+120
-  cp config/env/livedev.js src/app/env-config.js;
-  clear;
-  echo "===== starting LIVE DEV server ====="
-  npm run copy-repos
-  npm start
-}
-
-function gittt {
-  clear
-  _originalDir=`pwd`
-  cd ~/projects/pl;
-  _projectDir=`pwd`
-  projects=('woody' 'hamm' 'lightyear' 'toychest' 'pl-apis')
-  for i in "${projects[@]}"
-  do
-    cd $i
-    printf "%-11s" $i | tr '[:lower:]' '[:upper:]'
-    echo ""
-    git branch
-    git status | grep -v "^On branch"
-    cd $_projectDir
-  done
-  cd $_originalDir
-}
 
 export PYTHON_CONFIGURE_OPTS="--enable-framework"
 
@@ -228,54 +170,8 @@ alias python='python3'
 alias pip='/usr/bin/python3 -m pip'
 
 
-function vapi() {
-  cdapi;
-  . .venv/wp/bin/activate;
-  alias pip='/Users/jhanink/projects/pl/api-workplace/.venv/wp/bin/pip3'
-}
-
-
-
-function ggitgrepall() {
-git grep "$@" $(git rev-list --all)
-}
-
-
 
 #------ END / PL stuff ------
-
-##############################################
-#                  OLD STUFF
-##############################################
-function ecshowenv() {
-  echo "---------------------------------" && cat config/env/local.js | grep apiWorkplace -A 1 | tail -1 | tr -d "[:space:]" | cut -c 44- | rev | cut -c 3- | rev && echo "---------------------------------";
-}
-
-function fbget() {
-  firebase data:get $1 -f learning-test | prettyjson --inline-arrays=1
-}
-function fbgetplain() {
-  firebase data:get $1 -f learning-test
-}
-function fbset() {
-  firebase data:set $1 $2 -f learning-test -y
-}
-
-#alias startjenkins='sudo launchctl load /Library/LaunchDaemons/org.jenkins-ci.plist'
-#alias stopjenkins='sudo launchctl unload /Library/LaunchDaemons/org.jenkins-ci.plist'
-
-
-#############################################
-#                     GS
-#############################################
-
-export SK_PROJECTS_DIR=~/projects/sk
-alias cdsk='cd $SK_PROJECTS_DIR'
-alias cdoo='cd $SK_PROJECTS_DIR/online-office-vue && clear'
-alias llintprettier='cdoo && yarn lint && yarn dev:prettier'
-alias oostart='cdoo; yarn serve'
-
-
 
 
 ####################################################
@@ -286,26 +182,22 @@ export GITAWAREPROMPT=~/.bash/git-aware-prompt
 source "${GITAWAREPROMPT}/main.sh"
 export PS1="→ \W \[$txtcyn\]\$git_branch\[$txtred\]\$git_dirty\[$txtrst\]\$ "
 
-# export MYSQL_PATH=/usr/local/Cellar/mysql/5.6.27
-# export PATH=$PATH:$MYSQL_PATH/bin
+source ~/.git-completion.bash
 
 # say -v Serena < /tmp/hal.txt -o /tmp/hal_serena6.aiff && lame -m m /tmp/hal_serena6.aiff /tmp/hal_serena6.mp3
 
-
-
-# PATH=/usr/local/Cellar/vim/8.0.0600/bin:$PATH;
-
-# Setting PATH for Python
-PATH="/Users/jhanink/.pyenv/shims:/usr/local/bin:${PATH}"
-export PATH
-
 [[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]] && . "/usr/local/etc/profile.d/bash_completion.sh"
-
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# Setting PATH for Python
+PATH="/Users/jhanink/.pyenv/shims:/usr/local/bin:${PATH}"
+export PATH
+
+source ~/.nvm/nvm.sh
 
 nvm use stable
 
@@ -316,9 +208,9 @@ nvm use stable
 
 export BASH_SILENCE_DEPRECATION_WARNING=1
 
-
-#cdeduclients
-
+cdeduclients
+gitt
+setenv
 
 #---------------------------- END ----------------------------
 
@@ -382,3 +274,4 @@ elif type compctl &>/dev/null; then
   compctl -K _npm_completion npm
 fi
 ###-end-npm-completion-###
+eval "$(/opt/homebrew/bin/brew shellenv)"

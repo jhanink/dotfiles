@@ -120,7 +120,7 @@ nnoremap <silent> <C-l> :nohl<CR><C-l>
 
 set laststatus=2
 set number
-set relativenumber
+" set relativenumber
 set cursorline
 set background=dark
 set tabstop=4
