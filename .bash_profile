@@ -2,84 +2,73 @@ _pwd=`pwd`
 
 export EDITOR='vim'
 
+#----------------------------------------------
+export PL_ENV=env16
+export PL_HOST=presencek8s.com
+
 export PL_APP_DIR=~/projects/pl/edu-clients
 export PL_FOUNDRY_DIR=~/projects/pl/foundry
-export PL_ENV=env30
+export PL_CYPRESS_DIR=$PL_APP_DIR/cypress
+export PL_CYPRESS_SCRIPTS_DIR=$PL_APP_DIR/cypress-scripts
 
-export PL_TEST_RECORD_VIDEO=0
+export YAML_FILE=suite-basic-smoke.yaml
+export CY_SUITE=basic-smoke
 
-export YAML_FILE=bsd.yaml
-#export YAML_FILE=mult-org-cam.yaml
-#export YAML_FILE=am-script-v7.yaml
-#export YAML_FILE=fte-data.yaml
+export CYPRESS_BASE_URL=https://dev.presencek8s.com:3010
+export CYPRESS_BASE_URL=https://env16-apps.presencek8s.com
 
-function showenv() {
-  echo
-  echo "======================"
-  echo  $PL_ENV
-  echo "======================"
-  echo
-}
-
+#----------------------------------------------
+export CYPRESS_PL_CYPRESS_DEBUG=false
+export CYPRESS_PL_API_DEBUG=true
+#----------------------------------------------
+export CYPRESS_RECORD_KEY=79caa089-f8c7-479a-8a36-c9711834abfd
+export CYPRESS_numTestsKeptInMemory=500
+export CYPRESS_videoRecording=false
+#----------------------------------------------
 function setenv() {
-  export APPS_URL=https://$PL_ENV-apps.presencek8s.com
   export AUTH_URL=https://$PL_ENV-login.presencek8s.com
   export APIWORKPLACE_URL=https://$PL_ENV-workplace.presencek8s.com
-  export APOLLO_URL=https://$PL_ENV-workplace.presencek8s.com/graphql/v1/
   export PLATFORM_URL=https://$PL_ENV-platform.presencek8s.com
+  export APOLLO_URL=https://$PL_ENV-workplace.presencek8s.com/graphql/v1/
+  export APPS_URL=https://$PL_ENV-apps.presencek8s.com
 
   export PL_APPS=$APPS_URL
   export PL_LOGIN=$AUTH_URL
   export PL_WORKPLACE=$APIWORKPLACE_URL
   export PL_PLATFORM=$PLATFORM_URL
-
-  export PL_HOST=presencek8s.com
-  export PL_USERNAME=qauser
-  export PL_PASSWORD=qauser123
-
-  showenv
 }
-
-
-
-export PL_CYPRESS_DIR=$PL_APP_DIR/cypress
-export PL_CYPRESS_SCRIPTS_DIR=$PL_APP_DIR/cypress-scripts
-
-export CYPRESS_numTestsKeptInMemory=500
-export CYPRESS_videoRecording=false
-
-HISTCONTROL=ignorespace
-
+#-----------------------------------------------
+export COOKIE_DOMAIN=$PL_HOST
 export PL_PROJECTS_DIR=~/projects/pl
 export PL_PROJECTS2_DIR=~/projects/pl2
-
+export PL_USERNAME=qauser
+export PL_PASSWORD=qauser123
 #------- Aliases ----------
 alias cypress='npx cypress'
 alias showlinks='ll node_modules | grep ^l && ll node_modules | grep ^l | wc -l'
 
 alias foundry='python foundry.py run';
 alias foundrybasic='cdeduclients; npm run cy-seed'
-alias tailfoundry='clear; tail -f ~/projects/pl/foundry/.output--$YAML_FILE'
 
 alias ll='ls -alGp'
 alias eb='vim ~/.bash_profile && source ~/.bash_profile'
-alias ebb='source ~/.bash_profile'
+alias sb='source ~/.bash_profile'
 alias ev='vim ~/.vimrc'
 alias et='vim ~/.tmux.conf'
 alias stmux='tmux source ~/.tmux.conf'
 
-
 alias cdgt='cd $PL_PROJECTS_DIR/gt'
 alias cdpl='cd $PL_PROJECTS_DIR'
 alias cdpl2='cd $PL_PROJECTS2_DIR'
-alias cdeduclients='cdpl && cd edu-clients && clear'
-alias cdec2='cdpl2 && cd edu-clients && clear'
-alias cd1='cdeduclients'
-alias cd2='cdec2'
+alias cdeduclients='cdpl && cd edu-clients && clear && pwd'
+alias cdtherapyessentials='cdpl && cd therapy-essentials && clear && pwd'
+alias cdec='cdeduclients'
+alias cdee='cdpl2 && cd edu-clients && clear && pwd'
 alias cdwoody='cdpl && cd woody && clear'
-alias cdroom='cdpl && cd room && clear'
-alias cdfoundry='cd ~/projects/pl/foundry'
-alias cdcypressscripts='cd ~/projects/pl/edu-clients/cypress-scripts'
+alias cdroom='cdpl && cd room && clear && pwd'
+alias cdfoundry='cd ~/projects/pl/foundry && clear && pwd'
+alias cdcypressscripts='cd ~/projects/pl/edu-clients/cypress-scripts && clear && pwd'
+alias cdcs='cdcypressscripts'
 alias cdcompslib='cdpl && cd pl-components-ng2/src/lib && clear'
 alias cdrn='cdpl && cd nativedev'
 alias adminlogin='open https://${PL_ENV}.login.presencestag.com/admin/user/user'
@@ -110,7 +99,18 @@ alias jsonpp='cat $1 | python -m json.tool'
 alias ngrok='~/joe/install/ngrok'
 alias pip='.venv/bin/pip3'
 
-alias cyhg='/Applications/Cypress.app/Contents/MacOS/Cypress --project ${_pwd} --show-headless-gui'
+alias cyhg='cypress --show-headless-gui'
+alias nr='npm run $@'
+alias cylistenv='npm run cy-list-env'
+alias cyusers='npm run cy-users'
+alias cylogin='npm run cy-login'
+alias cyseed='npm run cy-basic-seed'
+alias cyopen='npm run cy-open-basic-smoke'
+alias combinebasicyamls='cypress-scripts/combine-basic-yamls.sh'
+alias pwtest='npx playwright test'
+alias pwtesth='npx playwright test --headed'
+alias pwtestd='npx playwright test --debug'
+alias pwtestr='npx playwright show-report '
 
 alias ecwatch='cdcompslib && pwd && fswatch -0 . | while read -d "" f; do echo $f; rsync -a . ~/projects/pl/edu-clients/src/lib-components; done'
 
@@ -121,10 +121,23 @@ alias wwebserver='python3 -m http.server'
 
 #-----------------------------------
 
+HISTCONTROL=ignorespace
 
 ##############################################################
 #                     FUNCTIONS
 ##############################################################
+
+function tailfoundry() {
+  YAML_OUTPUT_NUMBER=${YAML_OUTPUT_NUMBER:-""};
+  if [ -z ${CY_SUITE} ];
+  then
+    YAML_FILE=${YAML_FILE:-"bsd.yaml"};
+  else
+    YAML_FILE=suite-${CY_SUITE}.yaml
+  fi
+  clear;
+  tail -f ~/projects/pl/foundry/.output${YAML_OUTPUT_COUNTER}--${YAML_FILE}
+}
 
 function plversiondrift() {
   MODULES=('pl-core' 'pl-apis' 'pl-buttons' 'pl-inputs' 'pl-models' 'pl-modules' 'pl-navs' 'pl-overlays' 'pl-records' 'pl-table')
@@ -148,15 +161,19 @@ function roomstart() {
 #  export PL_ENV=ipadsafari
   setenv
   clear
-  showenv
-  npm run ipad-dev
+#  npm run cy-list-env
+  npm start
 }
 
 function ecstart() {
   setenv
   clear
-  showenv
+#  npm run cy-list-env
   npm start
+}
+function ecbuild() {
+  clear
+  npm run setup && npx --max_old_space_size=8192 ng build --configuration=local --deployUrl=/c/
 }
 
 
@@ -198,8 +215,7 @@ PATH="/Users/jhanink/.pyenv/shims:/usr/local/bin:${PATH}"
 export PATH
 
 source ~/.nvm/nvm.sh
-
-nvm use stable
+source ~/.fzf.bash
 
 #npm config set package-lock false
 
@@ -211,6 +227,7 @@ export BASH_SILENCE_DEPRECATION_WARNING=1
 cdeduclients
 gitt
 setenv
+clear
 
 #---------------------------- END ----------------------------
 

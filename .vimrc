@@ -10,6 +10,7 @@ set wildignore+=*/tmp/*,*/app/prod/*,*/test/*,*/node_modules/*,*/dev/*,*/prod/*,
 call plug#begin('~/.vim/plugged')
 
 Plug 'scrooloose/nerdtree'
+Plug 'junegunn/fzf.vim'
 Plug 'tpope/vim-fugitive'
 Plug 'bling/vim-airline'
 Plug 'majutsushi/tagbar'
@@ -28,8 +29,6 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'easymotion/vim-easymotion'
 Plug 'elzr/vim-json'
 Plug 'crusoexia/vim-monokai'
-"Plug 'Valloric/YouCompleteMe'
-"Plug 'wincent/Command-T'
 Plug 'tpope/vim-fugitive'
 Plug 'leafgarland/typescript-vim'
 Plug 'vim-utils/vim-interruptless'
