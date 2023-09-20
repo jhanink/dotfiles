@@ -1,54 +1,171 @@
 _pwd=`pwd`
-
 export EDITOR='vim'
 
-#----------------------------------------------
-export PL_ENV=env16
-export PL_HOST=presencek8s.com
 
-export PL_APP_DIR=~/projects/pl/edu-clients
-export PL_FOUNDRY_DIR=~/projects/pl/foundry
-export PL_CYPRESS_DIR=$PL_APP_DIR/cypress
-export PL_CYPRESS_SCRIPTS_DIR=$PL_APP_DIR/cypress-scripts
+function setbase() {
+  #----------------------------------------------
+  export PL_ENV=env45
+  export PL_HOST=presencek8s.com
+  #----------------------------------------------
+  export PL_APP=edu-clients
+  export PL_APP_BASE_URL=https://dev.presencek8s.com:3010
+  #----------------------------------------------
+  export PL_SUITE=basic-smoke
+  #----------------------------------------------
+  export PL_PROJECTS_DIR=~/projects/pl
+  #----------------------------------------------
+  #-----------------------------------------------
+  export COOKIE_DOMAIN=$PL_HOST
+  #-----------------------------------------------
+  export PL_USERNAME=qauser
+  export PL_PASSWORD=qauser123
+  #----------------------------------------------
+}
 
-export YAML_FILE=suite-basic-smoke.yaml
-export CY_SUITE=basic-smoke
+function sette() {
+  cdte
+  setbase
+  export PL_ENV=env45
+  #----------------------------------------------
+  export PL_APP=therapy-essentials
+  export PL_APP_BASE_URL=https://dev.presencek8s.com:3015
+  export PL_SUITE=feature
+  #----------------------------------------------
+  alias pwseed='npm run --prefix playwright-scripts pw-seed'
+  alias pwlogin='npm run --prefix playwright-scripts pw-login'
+  alias pwusers='npm run --prefix playwright-scripts pw-users'
+  alias pwenv='npm run --prefix playwright-scripts pw-list-env'
+  alias pwingest='npm run --prefix playwright-scripts pw-ingest'
+  alias pwuser='pwfreemium'
+  alias pwfreemium='jq . playwright-scripts/transient/individual-freemium-user.json'
+  alias pwpremier='jq . playwright-scripts/transient/individual-premier-user.json'
+  alias pwschooladmin='jq . playwright-scripts/transient/school-admin-user.json'
+  #----------------------------------------------
+  export HEAP_KEY=881309070
+  export FULLSTORY_KEY=o-1CARV9-na1
+  export FULLSTORY_KEY=o-1EFHAF-na1
+  export PENDO_KEY=ee9de52a-65a3-494d-66cb-a5e0f581dc2b
+  export BAA_SIGN_URL=https://secure.na3.adobesign.com/public/esignWidget?wid=CBFCIBAA3AAABLblqZhAUpnfcrIOIRJ7j5xjEyEzlkObd6J73PalR9sfQ_MEqzoAR_Xq8rCRkOq5NzuBe7FE*
 
-export CYPRESS_BASE_URL=https://dev.presencek8s.com:3010
-export CYPRESS_BASE_URL=https://env16-apps.presencek8s.com
+  unset HEAP_KEY
+  unset FULLSTORY_KEY
+  unset PENDO_KEY
+  export DEBUG=true
+  #unset BAA_SIGN_URL
+  #----------------------------------------------
+  setcommon
+  #----------------------------------------------
+  setenv
+  npm run --prefix playwright-scripts pw-list-env
+}
 
-#----------------------------------------------
-export CYPRESS_PL_CYPRESS_DEBUG=false
-export CYPRESS_PL_API_DEBUG=true
-#----------------------------------------------
-export CYPRESS_RECORD_KEY=79caa089-f8c7-479a-8a36-c9711834abfd
-export CYPRESS_numTestsKeptInMemory=500
-export CYPRESS_videoRecording=false
-#----------------------------------------------
+function setec() {
+  cdec
+  setbase
+  #----------------------------------------------
+  export PL_ENV=env45
+  #----------------------------------------------
+  export PL_APP=edu-clients
+  export PL_APP_BASE_URL=https://dev.presencek8s.com:3010
+  export PL_SUITE=basic-smoke
+  #----------------------------------------------
+  alias pwseed='npm run pw-seed'
+  alias pwlogin='npm run pw-login'
+  alias pwusers='npm run pw-users'
+  alias pwenv='npm run pw-list-env'
+  alias pwingest='npm run pw-ingest'
+  alias pwuser='pwslp'
+  alias pwslp='jq . playwright-scripts/transient/provider-slp.json'
+  #----------------------------------------------
+  setcommon
+  #----------------------------------------------
+  setenv
+  npm run pw-list-env
+}
+
+function setroom() {
+  cd ~/projects/pl/room
+  setbase
+  export PL_ENV=env45
+  export PL_APP_BASE_URL=https://dev.presencek8s.com:3013
+  #----------------------------------------------
+  export PL_APP=room
+  export PL_SUITE=feature
+  #----------------------------------------------
+  setcommon
+  #----------------------------------------------
+  setenv
+  alias pwseed='npm run pw-seed $@'
+  alias pwtest='npx playwright test --trace on $@'
+  alias pwdebug='npx playwright test --debug --trace on $@'
+  alias pwheaded='npx playwright test --headed --trace on $@'
+  alias pwreport='npx playwright show-report test-results/ui-tests/report'
+  pwd
+}
+
+function setroom2() {
+  cd ~/projects/pl2/room
+  setbase
+  export PL_ENV=env45
+  #----------------------------------------------
+  setcommon
+  #----------------------------------------------
+  setenv
+  alias pwtest='npx playwright test --trace on $@'
+  pwd
+}
+
+function setroom3() {
+  cd ~/projects/pl3/room
+  setbase
+  export PL_ENV=env45
+  #----------------------------------------------
+  setcommon
+  #----------------------------------------------
+  setenv
+  alias pwtest='npx playwright test --trace on $@'
+  pwd
+}
+
+function setcommon() {
+  export PL_APP_DIR=$PL_PROJECTS_DIR/$PL_APP
+  export PL_FOUNDRY_DIR=$PL_PROJECTS_DIR/foundry
+  export PL_PLAYWRIGHT_DIR=$PL_APP_DIR/playwright
+  export PL_PLAYWRIGHT_SCRIPTS_DIR=$PL_APP_DIR/playwright-scripts
+  export YAML_FILE=suite-${PL_SUITE}.yaml
+}
+
 function setenv() {
   export AUTH_URL=https://$PL_ENV-login.presencek8s.com
   export APIWORKPLACE_URL=https://$PL_ENV-workplace.presencek8s.com
   export PLATFORM_URL=https://$PL_ENV-platform.presencek8s.com
   export APOLLO_URL=https://$PL_ENV-workplace.presencek8s.com/graphql/v1/
-  export APPS_URL=https://$PL_ENV-apps.presencek8s.com
+  export ESSENTIALS_URL=https://$PL_ENV-essentials.presencek8s.com
+  export KANGA_URL=$ESSENTIALS_URL
+  export KANGA_API=$ESSENTIALS_URL
+  export APPS_URL=$PL_APP_BASE_URL
 
   export PL_APPS=$APPS_URL
   export PL_LOGIN=$AUTH_URL
   export PL_WORKPLACE=$APIWORKPLACE_URL
   export PL_PLATFORM=$PLATFORM_URL
+  export PL_KANGA=$ESSENTIALS_URL
+
+  export EDUCLIENTS_URL=https://$PL_ENV-apps.presencek8s.com/c
+  export THERAPY_URL=https://$PL_ENV-therapy.presencek8s.com
+  export HELP_URL=https://presencelearning.helpjuice.com
+  export LIBRARY_URL=https://$PL_ENV-library.presencek8s.com
+  export ROOM_URL=https://$PL_ENV-room.presencek8s.com
+  export LIGHTYEAR_URL=$ROOM_URL
 }
-#-----------------------------------------------
-export COOKIE_DOMAIN=$PL_HOST
-export PL_PROJECTS_DIR=~/projects/pl
-export PL_PROJECTS2_DIR=~/projects/pl2
-export PL_USERNAME=qauser
-export PL_PASSWORD=qauser123
+
+
 #------- Aliases ----------
-alias cypress='npx cypress'
 alias showlinks='ll node_modules | grep ^l && ll node_modules | grep ^l | wc -l'
 
 alias foundry='python foundry.py run';
-alias foundrybasic='cdeduclients; npm run cy-seed'
+alias teformat='cdte; npm run format'
+alias techeckformat='cdte; npm run format:check'
 
 alias ll='ls -alGp'
 alias eb='vim ~/.bash_profile && source ~/.bash_profile'
@@ -57,22 +174,46 @@ alias ev='vim ~/.vimrc'
 alias et='vim ~/.tmux.conf'
 alias stmux='tmux source ~/.tmux.conf'
 
-alias cdgt='cd $PL_PROJECTS_DIR/gt'
 alias cdpl='cd $PL_PROJECTS_DIR'
-alias cdpl2='cd $PL_PROJECTS2_DIR'
-alias cdeduclients='cdpl && cd edu-clients && clear && pwd'
-alias cdtherapyessentials='cdpl && cd therapy-essentials && clear && pwd'
-alias cdec='cdeduclients'
-alias cdee='cdpl2 && cd edu-clients && clear && pwd'
-alias cdwoody='cdpl && cd woody && clear'
-alias cdroom='cdpl && cd room && clear && pwd'
+alias cdflutter='cdpl && cd flutterapp && clear && pwd'
 alias cdfoundry='cd ~/projects/pl/foundry && clear && pwd'
 alias cdcypressscripts='cd ~/projects/pl/edu-clients/cypress-scripts && clear && pwd'
-alias cdcs='cdcypressscripts'
 alias cdcompslib='cdpl && cd pl-components-ng2/src/lib && clear'
+alias cdteservices='cdte && cd projects/pl-core-services/src && clear'
 alias cdrn='cdpl && cd nativedev'
-alias adminlogin='open https://${PL_ENV}.login.presencestag.com/admin/user/user'
-alias adminworkplace='open https://${PL_ENV}.workplace.presencestag.com/admin'
+alias adminlogin='open https://${PL_ENV}.login.presencek8s.com/admin/user/user'
+alias adminworkplace='open https://${PL_ENV}.workplace.presencek8s.com/admin'
+
+function nullish() {
+alias pwtest='npx playwright test'
+alias pwtesth='npx playwright test --headed'
+alias pwtestd='npx playwright test --debug'
+alias pwtestr='npx playwright show-report '
+}
+
+function cdte() {
+  cdpl && cd therapy-essentials && clear && pwd
+}
+function cdec() {
+  cdpl && cd edu-clients && clear && pwd
+}
+function cdroom() {
+  cdpl && cd room && clear && pwd
+}
+
+function init() {
+  setbase
+  setcommon
+  setenv
+
+  clear
+  setroom
+}
+
+#----------------------------------------------
+#init
+#----------------------------------------------
+
 
 alias gitt='clear && git branch && git status'
 alias gitlog='clear && git branch && git log --oneline'
@@ -88,7 +229,9 @@ alias gitusers='git shortlog -sne'
 alias gitbranchcontains='git branch --contains $1'
 alias gitmergepath='git log --graph --oneline --no-abbrev-commit | grep "Merge branch '.*' into" | sed 's/^[^a-z0-9]*[a-z0-9]//g''
 alias SHA='git log | head -1 | cut -c 8- '
+alias SHA='git rev-parse HEAD'
 alias gcm='git commit -am $@'
+alias gp='git push --no-verify origin $@'
 
 alias grepa='grep -in -m 1 -A 20 $1 $2'
 alias grepb='grep -in -m 1 -B 20 $1 $2'
@@ -99,21 +242,13 @@ alias jsonpp='cat $1 | python -m json.tool'
 alias ngrok='~/joe/install/ngrok'
 alias pip='.venv/bin/pip3'
 
-alias cyhg='cypress --show-headless-gui'
 alias nr='npm run $@'
-alias cylistenv='npm run cy-list-env'
-alias cyusers='npm run cy-users'
-alias cylogin='npm run cy-login'
-alias cyseed='npm run cy-basic-seed'
-alias cyopen='npm run cy-open-basic-smoke'
-alias combinebasicyamls='cypress-scripts/combine-basic-yamls.sh'
-alias pwtest='npx playwright test'
-alias pwtesth='npx playwright test --headed'
-alias pwtestd='npx playwright test --debug'
-alias pwtestr='npx playwright show-report '
+alias cyhg='cypress --show-headless-gui'
+
 
 alias ecwatch='cdcompslib && pwd && fswatch -0 . | while read -d "" f; do echo $f; rsync -a . ~/projects/pl/edu-clients/src/lib-components; done'
 
+alias tewatch='cdteservices && pwd && fswatch -0 . | while read -d "" f; do echo $f; cdte && npm run format; done'
 alias plshowversiondrift='plversiondrift | column -t'
 
 alias wwebserver='python3 -m http.server'
@@ -127,13 +262,26 @@ HISTCONTROL=ignorespace
 #                     FUNCTIONS
 ##############################################################
 
+function fix_mosh_server() {
+  local fw='/usr/libexec/ApplicationFirewall/socketfilterfw'
+  local mosh_sym="$(which mosh-server)"
+  local mosh_abs="$(greadlink -f $mosh_sym)"
+
+  sudo "$fw" --setglobalstate off
+  sudo "$fw" --add "$mosh_sym"
+  sudo "$fw" --unblockapp "$mosh_sym"
+  sudo "$fw" --add "$mosh_abs"
+  sudo "$fw" --unblockapp "$mosh_abs"
+  sudo "$fw" --setglobalstate on
+}
+
 function tailfoundry() {
   YAML_OUTPUT_NUMBER=${YAML_OUTPUT_NUMBER:-""};
-  if [ -z ${CY_SUITE} ];
+  if [ -z ${PL_SUITE} ];
   then
     YAML_FILE=${YAML_FILE:-"bsd.yaml"};
   else
-    YAML_FILE=suite-${CY_SUITE}.yaml
+    YAML_FILE=suite-${PL_SUITE}.yaml
   fi
   clear;
   tail -f ~/projects/pl/foundry/.output${YAML_OUTPUT_COUNTER}--${YAML_FILE}
@@ -157,20 +305,35 @@ function plversiondrift() {
   done
 }
 
-function roomstart() {
-#  export PL_ENV=ipadsafari
+function rooms() {
   setenv
   clear
-#  npm run cy-list-env
   npm start
 }
 
-function ecstart() {
+function rooms2() {
   setenv
   clear
-#  npm run cy-list-env
+  npm run pw-list-env
   npm start
 }
+
+function ecs() {
+  cdec
+  setenv
+  clear
+  npm run pw-list-env
+  npm start
+}
+
+function tes() {
+  cdte
+  setenv
+  clear
+  npm run --prefix playwright-scripts pw-list-env
+  npm start
+}
+
 function ecbuild() {
   clear
   npm run setup && npx --max_old_space_size=8192 ng build --configuration=local --deployUrl=/c/
@@ -186,13 +349,11 @@ fi
 alias python='python3'
 alias pip='/usr/bin/python3 -m pip'
 
-
-
 #------ END / PL stuff ------
 
 
 ####################################################
-#                      THE REST 
+#                      THE REST
 ####################################################
 
 export GITAWAREPROMPT=~/.bash/git-aware-prompt
@@ -205,29 +366,20 @@ source ~/.git-completion.bash
 
 [[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]] && . "/usr/local/etc/profile.d/bash_completion.sh"
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+#export NVM_DIR="$HOME/.nvm"
+#[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # Setting PATH for Python
-PATH="/Users/jhanink/.pyenv/shims:/usr/local/bin:${PATH}"
+PATH="/Users/jhanink/.pyenv/shims:/opt/homebrew/bin:/usr/local/bin:${PATH}"
 export PATH
 
-source ~/.nvm/nvm.sh
+#source ~/.nvm/nvm.sh
 source ~/.fzf.bash
-
-#npm config set package-lock false
-
-#eval "$(pyenv init -)"
-#pyenv shell 3.6.4
+eval "$(fnm env --use-on-cd)"
 
 export BASH_SILENCE_DEPRECATION_WARNING=1
-
-cdeduclients
-gitt
-setenv
-clear
 
 #---------------------------- END ----------------------------
 
@@ -291,4 +443,5 @@ elif type compctl &>/dev/null; then
   compctl -K _npm_completion npm
 fi
 ###-end-npm-completion-###
+
 eval "$(/opt/homebrew/bin/brew shellenv)"
